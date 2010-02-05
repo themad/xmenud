@@ -23,6 +23,12 @@ import getopt
 # for not doing anything anymore
 import sys
 
+NAME="xmenud"
+VERSION="0.7"
+AUTHOR="Matthias Kühlke"
+EMAIL="mad@unserver.de"
+YEAR="2010"
+
 def create_menu(menu, depth = 0):
 	def launch(widget, string):
 		subprocess.Popen(string)
@@ -63,6 +69,26 @@ def create_menu(menu, depth = 0):
 	themenu.show()
 	return themenu
 
+def create_popup():
+	m=gtk.Menu()
+	about = gtk.ImageMenuItem(stock_id=gtk.STOCK_ABOUT)
+	quit = gtk.ImageMenuItem(stock_id=gtk.STOCK_QUIT)
+	about.connect('activate', lambda w: about_dialog())
+	quit.connect('activate', lambda w: gtk.main_quit())
+	m.append(about)
+	m.append(quit)
+	about.show()
+	quit.show()
+	return m
+
+def about_dialog():
+	d = gtk.AboutDialog()
+	d.set_name(NAME)
+	d.set_version(VERSION)
+	d.set_authors(['%s <%s>' % (AUTHOR,EMAIL)])
+	d.set_copyright("(c) %s" % YEAR)
+	d.run()
+	d.destroy()
 
 def tray():
 	i = gtk.StatusIcon()
@@ -91,9 +117,10 @@ def main():
 
 	mainmenu=create_menu(xdg.Menu.parse())
 	if run_tray:
+		popupmenu=create_popup()
 		trayicon=tray()
 		trayicon.connect("activate", lambda w: mainmenu.popup(None, None, None, 0, 0))
-		trayicon.connect("popup-menu", lambda w,b,t: mainmenu.popup(None, None, None, b, t))
+		trayicon.connect("popup-menu", lambda w,b,t: popupmenu.popup(None, None, None, b, t))
 	else:
 		mainmenu.connect("hide", lambda w: gtk.main_quit())
 		mainmenu.popup(None, None, None, 0, 0)
@@ -101,8 +128,8 @@ def main():
 	return 0
 
 def showversion():
-	print 'xmenud v0.7- a small start menu.'
-	print '(c) 2010 Matthias Kühlke <mad@unserver.de>'
+	print '%s %s- %s' % (NAME, VERSION, TAGLINE)
+	print '(c) %s %s <%s>' % (YEAR, AUTHOR, EMAIL)
 
 def usage():
 	print 'usage: %s [--tray|--help] [--version]' % sys.argv[0]
