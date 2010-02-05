@@ -86,7 +86,8 @@ def about_dialog():
 	d.set_name(NAME)
 	d.set_version(VERSION)
 	d.set_authors(['%s <%s>' % (AUTHOR,EMAIL)])
-	d.set_copyright("(c) %s" % YEAR)
+	d.set_copyright("(c) %s %s" % (YEAR,AUTHOR))
+	d.set_modal(False)
 	d.run()
 	d.destroy()
 
