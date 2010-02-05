@@ -1,19 +1,29 @@
 #!/usr/bin/python
 
+# for launching the app
 import subprocess
-import pygtk
+
+# for drawing the stuff
 import gtk
+
+# for catching the error
 import glib
+
+# for reading that stuff
 import xdg.Menu
 import xdg.DesktopEntry
+
+# for finding that stuff to draw
 import xdg.IconTheme
 
+# for finding what stuff to do
+import getopt
+
+# for not doing anything anymore
+import sys
 
 def create_menu(menu, depth = 0):
 	def launch(widget, string):
-		print "Running %s." % string
-		#os.spawnlp(os.P_NOWAIT,string)
-		gtk.main_quit()
 		subprocess.Popen(string)
 
 	def get_exec(string):
@@ -53,57 +63,42 @@ def create_menu(menu, depth = 0):
 	return themenu
 
 
-class MenuExample:
-    def __init__(self):
-#        window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-#        window.set_size_request(200, 100)
-#        window.set_title("MadMenu")
-#        window.connect("delete_event", lambda w,e: gtk.main_quit())
-
-	mainmenu=create_menu(xdg.Menu.parse())
-	mainmenu.popup(None, None, None, 0, 0)
-#        root_menu = gtk.MenuItem("Root Menu")
-#	root_menu.show()
-#        root_menu.set_submenu(mainmenu) 
-#	vbox = gtk.VBox(False, 0)
-#        window.add(vbox)
-#        vbox.show()
-        # Create a menu-bar to hold the menus and add it to our main window
-#        menu_bar = gtk.MenuBar()
-#        vbox.pack_start(menu_bar, False, False, 2)
-#        menu_bar.show()
-
-        # Create a button to which to attach menu as a popup
-#        button = gtk.Button("press me")
-#        button.connect_object("event", self.button_press, mainmenu)
-#        vbox.pack_end(button, True, True, 2)
-#        button.show()
-
-        # And finally we append the menu-item to the menu-bar -- this is the
-        # "root" menu-item I have been raving about =)
- #       menu_bar.append(root_menu)
-
-        # always display the window as the last step so it all splashes on
-        # the screen at once.
- #       window.show()
-
-    # Respond to a button-press by posting a menu passed in as widget.
-    #
-    # Note that the "widget" argument is the menu being posted, NOT
-    # the button that was pressed.
-#    def button_press(self, widget, event):
-#        if event.type == gtk.gdk.BUTTON_PRESS:
-#            widget.popup(None, None, None, event.button, event.time)
-#            # Tell calling code that we have handled this event the buck
-#            # stops here.
-#            return True
-#        # Tell calling code that we have not handled this event pass it on.
-#        return False
+def tray():
+	i = gtk.StatusIcon()
+	i.set_from_stock(gtk.STOCK_EXECUTE)
+	i.set_tooltip("xmenud")
+	i.set_visible(True)
+	return i
 
 def main():
-    gtk.main()
-    return 0
+	run_tray = False
+	try:
+		opts, args = getopt.getopt(sys.argv[1:],"ht",["help", "tray"])
+	except getopt.GetOptErr, err:
+		print str(err)
+		usage()
+		sys.exit(2)
+	for o, a in opts:
+		if o in ('-h', '--help'):
+			usage()
+			sys.exit()
+		elif o in ('-t', '--tray'):
+			run_tray = True
+
+
+	mainmenu=create_menu(xdg.Menu.parse())
+	if run_tray:
+		trayicon=tray()
+		trayicon.connect("activate", lambda w: mainmenu.popup(None, None, None, 0, 0))
+		trayicon.connect("popup-menu", lambda w,b,t: mainmenu.popup(None, None, None, b, t))
+	else:
+		mainmenu.connect("hide", lambda w: gtk.main_quit())
+		mainmenu.popup(None, None, None, 0, 0)
+	gtk.main()
+	return 0
+
+def usage():
+	print 'usage: %s [-t]' % sys.argv[0]
 
 if __name__ == "__main__":
-    MenuExample()
-    main()
+	main()
