@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # for launching the app
 import subprocess
@@ -73,13 +74,15 @@ def tray():
 def main():
 	run_tray = False
 	try:
-		opts, args = getopt.getopt(sys.argv[1:],"ht",["help", "tray"])
-	except getopt.GetOptErr, err:
+		opts, args = getopt.getopt(sys.argv[1:],"htv",["help", "tray", "version"])
+	except getopt.GetoptError, err:
 		print str(err)
 		usage()
 		sys.exit(2)
 	for o, a in opts:
-		if o in ('-h', '--help'):
+		if o in ('-v', '--version'):
+			showversion()
+		elif o in ('-h', '--help'):
 			usage()
 			sys.exit()
 		elif o in ('-t', '--tray'):
@@ -97,8 +100,12 @@ def main():
 	gtk.main()
 	return 0
 
+def showversion():
+	print 'xmenud v0.7- a small start menu.'
+	print '(c) 2010 Matthias Kühlke <mad@unserver.de>'
+
 def usage():
-	print 'usage: %s [-t]' % sys.argv[0]
+	print 'usage: %s [--tray|--help] [--version]' % sys.argv[0]
 
 if __name__ == "__main__":
 	main()
