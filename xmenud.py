@@ -28,6 +28,7 @@ VERSION="0.7"
 AUTHOR="Matthias Kühlke"
 EMAIL="mad@unserver.de"
 YEAR="2010"
+TAGLINE="A desktop menu, with klickibunti."
 
 def create_menu(menu, depth = 0):
 	def launch(widget, string):
@@ -109,14 +110,20 @@ def main():
 	for o, a in opts:
 		if o in ('-v', '--version'):
 			showversion()
+			sys.exit()
 		elif o in ('-h', '--help'):
 			usage()
 			sys.exit()
 		elif o in ('-t', '--tray'):
 			run_tray = True
 
-
-	mainmenu=create_menu(xdg.Menu.parse())
+	try:
+		desktopmenu = xdg.Menu.parse()
+	except xdg.Exceptions.ParsingError:
+		print 'Parsing error'
+		sys.exit(-1)
+	
+	mainmenu=create_menu(desktopmenu)
 	if run_tray:
 		popupmenu=create_popup()
 		trayicon=tray()
@@ -125,7 +132,10 @@ def main():
 	else:
 		mainmenu.connect("hide", lambda w: gtk.main_quit())
 		mainmenu.popup(None, None, None, 0, 0)
-	gtk.main()
+	try:
+		gtk.main()
+	except KeyboardInterrupt:
+		pass
 	return 0
 
 def showversion():
