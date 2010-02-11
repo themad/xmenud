@@ -24,15 +24,21 @@ import getopt
 import sys
 
 NAME="xmenud"
-VERSION="0.7"
+VERSION="0.8"
 AUTHOR="Matthias Kühlke"
 EMAIL="mad@unserver.de"
 YEAR="2010"
 TAGLINE="A desktop menu, with klickibunti."
 
-def create_menu(menu, use_icons=True):
-    def launch(widget, string):
-        subprocess.Popen(string)
+def launcher_execute(string):
+    subprocess.Popen(string)
+
+def launcher_print(string):
+    print string
+
+def create_menu(menu, use_icons=True, launch=launcher_execute):
+    def launch_callback(widget, string):
+        launch(string)
 
     def get_exec(string):
         return string.split()[0]
@@ -63,14 +69,14 @@ def create_menu(menu, use_icons=True):
     for entry in menu.getEntries():
         if isinstance(entry, xdg.Menu.Menu):
             item = new_item(entry.getName(), entry.getIcon(), use_icons)
-            submenu = create_menu(entry, use_icons)
+            submenu = create_menu(entry, use_icons, launch)
             item.set_submenu(submenu)
             themenu.append(item)
             item.set_tooltip_text(entry.getComment())
             item.show()
         elif isinstance(entry, xdg.Menu.MenuEntry):
             item = new_item(entry.DesktopEntry.getName(), entry.DesktopEntry.getIcon(), use_icons)
-            item.connect("activate", launch, get_exec(entry.DesktopEntry.getExec()))
+            item.connect("activate", launch_callback, get_exec(entry.DesktopEntry.getExec()))
             themenu.append(item)
             item.set_tooltip_text(entry.DesktopEntry.getComment())
             item.show()
@@ -109,8 +115,9 @@ def tray():
 def main():
     run_tray = False
     use_icons = True
+    launch = launcher_execute
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"htvn",["help", "tray", "version", "no-icons"])
+        opts, args = getopt.getopt(sys.argv[1:],"htvnp",["help", "tray", "version", "no-icons", "pipe-mode"])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -120,10 +127,12 @@ def main():
             showversion()
             sys.exit()
         elif o in ('-h', '--help'):
-            usage()
+            usage(verbose=True)
             sys.exit()
         elif o in ('-t', '--tray'):
             run_tray = True
+        elif o in ('-p', '--pipe-mode'):
+            launch = launcher_print
         elif o in ('-n', '--no-icons'):
             use_icons = False
 
@@ -133,7 +142,7 @@ def main():
         print 'Error parsing the menu files.'
         sys.exit(-1)
     
-    mainmenu=create_menu(desktopmenu, use_icons)
+    mainmenu=create_menu(desktopmenu, use_icons, launch)
     if run_tray:
         popupmenu=create_popup()
         trayicon=tray()
@@ -152,8 +161,17 @@ def showversion():
     print '%s %s- %s' % (NAME, VERSION, TAGLINE)
     print '(c) %s %s <%s>' % (YEAR, AUTHOR, EMAIL)
 
-def usage():
-    print 'usage: %s [--tray|--help] [--no-icons] [--version]' % sys.argv[0]
+def usage(verbose=False):
+    print 'usage: %s [--tray|--help] [--no-icons] [--pipe-mode] [--version]' % sys.argv[0]
+    if verbose:
+        print '''Options:
+    --help,-h       This help message.
+    --tray,-t       Instead of launching a menu right away, put an icon into the systray.
+    --no-icons,-n   Don't load or show program icons.
+    --pipe-mode,-p  Instead of launching a program, just output its name to stdout.
+    --version,-v    Show version information.
+'''
+
 
 if __name__ == "__main__":
     main()

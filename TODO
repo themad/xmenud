@@ -5,8 +5,10 @@ Bugs
  * what to do if the menu is missing altogether?
 
 Maybe
- * Command line switch to return the command to stdout instead of executing.
  * Read other menus
    * other xdg menus, perhaps?
    * menus in another format
  * find a more shiny icon
+
+Done
+ * Command line switch to return the command to stdout instead of executing. -p
