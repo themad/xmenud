@@ -50,7 +50,10 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
         launch(string)
 
     def get_exec(string):
-        return string.split()[0]
+        try:
+            return string.split()[0]
+        except IndexError:
+            return ''
 
     def new_item(label, icon, use_icons):
         def get_icon(iconname):
