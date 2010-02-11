@@ -48,7 +48,6 @@ def create_menu(menu, use_icons=True):
                 except (TypeError, glib.GError):
                     img = gtk.image_new_from_stock(gtk.STOCK_DIALOG_QUESTION, gtk.ICON_SIZE_LARGE_TOOLBAR)
             else:
-                print iconname
                 img = gtk.image_new_from_icon_name(iconname, gtk.ICON_SIZE_LARGE_TOOLBAR)
             return img
 
@@ -131,7 +130,7 @@ def main():
     try:
         desktopmenu = xdg.Menu.parse()
     except xdg.Exceptions.ParsingError:
-        print 'Parsing error'
+        print 'Error parsing the menu files.'
         sys.exit(-1)
     
     mainmenu=create_menu(desktopmenu, use_icons)
