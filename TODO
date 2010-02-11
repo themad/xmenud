@@ -1,6 +1,5 @@
 Bugs
  * Defered image loading.
- * Fix that About-dialog bug.
  * handle broken .desktop entries
  * what to do if the menu is missing altogether?
 
@@ -12,3 +11,4 @@ Maybe
 
 Done
  * Command line switch to return the command to stdout instead of executing. -p
+ * Fix that About-dialog bug. -> replaced by making it possible to open multiple of them.

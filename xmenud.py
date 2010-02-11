@@ -1,5 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# xmenud - a small desktop menu
+# This is 
+#
 
 # for launching the app
 import subprocess
@@ -29,6 +33,11 @@ AUTHOR="Matthias Kühlke"
 EMAIL="mad@unserver.de"
 YEAR="2010"
 TAGLINE="A desktop menu, with klickibunti."
+LICENSE='''
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+'''
 
 def launcher_execute(string):
     subprocess.Popen(string)
@@ -96,14 +105,18 @@ def create_popup():
     return m
 
 def about_dialog():
+    def close(w, r):
+        if r == gtk.RESPONSE_CANCEL:
+            w.hide()
+
     d = gtk.AboutDialog()
     d.set_name(NAME)
     d.set_version(VERSION)
     d.set_authors(['%s <%s>' % (AUTHOR,EMAIL)])
-    d.set_copyright("(c) %s %s" % (YEAR,AUTHOR))
-    d.set_modal(False)
-    d.run()
-    d.destroy()
+    d.set_copyright("(C) %s %s" % (YEAR,AUTHOR))
+    d.set_license(LICENSE)
+    d.connect('response', close)
+    d.show()
 
 def tray():
     i = gtk.StatusIcon()
@@ -159,11 +172,12 @@ def main():
 
 def showversion():
     print '%s %s- %s' % (NAME, VERSION, TAGLINE)
-    print '(c) %s %s <%s>' % (YEAR, AUTHOR, EMAIL)
+    print ' Copyright (C) %s %s <%s>' % (YEAR, AUTHOR, EMAIL)
 
 def usage(verbose=False):
     print 'usage: %s [--tray|--help] [--no-icons] [--pipe-mode] [--version]' % sys.argv[0]
     if verbose:
+        print LICENSE
         print '''Options:
     --help,-h       This help message.
     --tray,-t       Instead of launching a menu right away, put an icon into the systray.
@@ -175,3 +189,5 @@ def usage(verbose=False):
 
 if __name__ == "__main__":
     main()
+
+# vim: set et ts=4 sw=4:
