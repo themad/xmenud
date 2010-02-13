@@ -27,6 +27,9 @@ import getopt
 # for not doing anything anymore
 import sys
 
+# regular expressions for funny parsing
+import re
+
 NAME="xmenud"
 VERSION="0.8"
 AUTHOR="Matthias Kühlke"
@@ -40,7 +43,11 @@ There is NO WARRANTY, to the extent permitted by law.
 '''
 
 def launcher_execute(string):
-    subprocess.Popen(string)
+    try:
+        subprocess.Popen(string, shell=True)
+    except:
+        # well, the user probably doesn't want anything to happen, so I'll just
+        pass
 
 def launcher_print(string):
     print string
@@ -50,10 +57,11 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
         launch(string)
 
     def get_exec(string):
-        try:
-            return string.split()[0]
-        except IndexError:
-            return ''
+        ''' Parses the string according to the XDG Desktop Entry Specifications. '''
+        r1 = re.compile('[^%]?%[fFuUdDnNickvm]')
+        r2 = re.compile('%%')
+        result=r2.sub('%', r1.sub('', string))
+        return result
 
     def new_item(label, icon, use_icons):
         def get_icon(iconname):

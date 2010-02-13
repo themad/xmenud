@@ -1,6 +1,5 @@
 Bugs
  * Defered image loading.
- * handle broken .desktop entries (fixed the wesnoth-bug at least)
  * what to do if the menu is missing altogether?
 
 Maybe
@@ -13,3 +12,4 @@ Done
  * Command line switch to return the command to stdout instead of executing. -p
  * Fix that About-dialog bug. -> replaced by making it possible to open multiple of them.
  * Fixed the wesnoth_editor empty Exec string bug. Just returns '' now.
+ * handle broken .desktop entries (fixed the wesnoth-bug at least) - doing proper parsing now.
