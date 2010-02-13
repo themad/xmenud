@@ -62,7 +62,7 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
 
     def get_exec(string):
         ''' Parses the string according to the XDG Desktop Entry Specifications. '''
-        r1 = re.compile('[^%]?%[fFuUdDnNickvm]')
+        r1 = re.compile('(?<!%)%[fFuUdDnNickvm]') 
         r2 = re.compile('%%')
         result=r2.sub('%', r1.sub('', string))
         return result
