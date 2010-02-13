@@ -42,6 +42,10 @@ This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 '''
 
+def error(string):
+    ''' output errors to stderr '''
+    print >>sys.stderr, string
+
 def launcher_execute(string):
     try:
         subprocess.Popen(string, shell=True)
@@ -143,7 +147,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:],"htvnp",["help", "tray", "version", "no-icons", "pipe-mode"])
     except getopt.GetoptError, err:
-        print str(err)
+        error(str(err))
         usage()
         sys.exit(2)
     for o, a in opts:
@@ -163,7 +167,7 @@ def main():
     try:
         desktopmenu = xdg.Menu.parse()
     except xdg.Exceptions.ParsingError:
-        print 'Error parsing the menu files.'
+        error('Error parsing the menu files.')
         sys.exit(-1)
     
     mainmenu=create_menu(desktopmenu, use_icons, launch)
@@ -184,11 +188,11 @@ def main():
 def showversion():
     print '%s %s- %s' % (NAME, VERSION, TAGLINE)
     print ' Copyright (C) %s %s <%s>' % (YEAR, AUTHOR, EMAIL)
+    print LICENSE
 
 def usage(verbose=False):
     print 'usage: %s [--tray|--help] [--no-icons] [--pipe-mode] [--version]' % sys.argv[0]
     if verbose:
-        print LICENSE
         print '''Options:
     --help,-h       This help message.
     --tray,-t       Instead of launching a menu right away, put an icon into the systray.

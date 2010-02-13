@@ -1,14 +1,15 @@
 Bugs
  * Defered image loading.
- * what to do if the menu is missing altogether?
 
 Maybe
  * Read other menus
    * other xdg menus, perhaps?
    * menus in another format
  * find a more shiny icon
+ * make it a menu bar with categories as top level items
 
 Done
+ * what to do if the menu is missing altogether? -> give an error and exit ;)
  * Command line switch to return the command to stdout instead of executing. -p
  * Fix that About-dialog bug. -> replaced by making it possible to open multiple of them.
  * Fixed the wesnoth_editor empty Exec string bug. Just returns '' now.
