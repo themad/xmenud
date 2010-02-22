@@ -60,11 +60,13 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
     def launch_callback(widget, string):
         launch(string)
 
-    def get_exec(string):
+    def get_exec(string, terminal=False):
         ''' Parses the string according to the XDG Desktop Entry Specifications. '''
         r1 = re.compile('(?<!%)%[fFuUdDnNickvm]') 
         r2 = re.compile('%%')
         result=r2.sub('%', r1.sub('', string))
+        if(terminal):
+            result = 'urxvt -e "%s"' % result
         return result
 
     def new_item(label, icon, use_icons):
@@ -100,7 +102,7 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
             item.show()
         elif isinstance(entry, xdg.Menu.MenuEntry):
             item = new_item(entry.DesktopEntry.getName(), entry.DesktopEntry.getIcon(), use_icons)
-            item.connect("activate", launch_callback, get_exec(entry.DesktopEntry.getExec()))
+            item.connect("activate", launch_callback, get_exec(entry.DesktopEntry.getExec(), entry.DesktopEntry.getTerminal()))
             themenu.append(item)
             item.set_tooltip_text(entry.DesktopEntry.getComment())
             item.show()
