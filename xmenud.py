@@ -62,7 +62,7 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
 
     def get_exec(string, terminal=False):
         ''' Parses the string according to the XDG Desktop Entry Specifications. '''
-        r1 = re.compile('(?<!%)%[fFuUdDnNickvm]') 
+        r1 = re.compile('(?<!%)%[fFuUdDnNickvm]')
         r2 = re.compile('%%')
         result=r2.sub('%', r1.sub('', string))
         if(terminal):
@@ -87,7 +87,10 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
             item = gtk.ImageMenuItem(stock_id=label)
             item.set_image(get_icon(icon))
         else:
-            item = gtk.MenuItem(label=label)
+            if (label=="- - -"):
+                item = gtk.SeparatorMenuItem()
+            else:
+                item = gtk.MenuItem(label=label)
         return item
 
 
@@ -101,10 +104,14 @@ def create_menu(menu, use_icons=True, launch=launcher_execute):
             item.set_tooltip_text(entry.getComment())
             item.show()
         elif isinstance(entry, xdg.Menu.MenuEntry):
-            item = new_item(entry.DesktopEntry.getName(), entry.DesktopEntry.getIcon(), use_icons)
+            item = new_item( ' - '.join(filter(None, [ entry.DesktopEntry.getName(), entry.DesktopEntry.getGenericName() ])), entry.DesktopEntry.getIcon(), use_icons)
             item.connect("activate", launch_callback, get_exec(entry.DesktopEntry.getExec(), entry.DesktopEntry.getTerminal()))
             themenu.append(item)
             item.set_tooltip_text(entry.DesktopEntry.getComment())
+            item.show()
+        elif isinstance(entry, xdg.Menu.Separator):
+            item = new_item('- - -', '', 0)
+            themenu.append(item)
             item.show()
     themenu.show()
     return themenu
