@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 # xmenud - a small desktop menu
@@ -174,11 +174,11 @@ def main():
             use_icons = False
 
     try:
-        desktopmenu = xdg.Menu.parse()
-    except xdg.Exceptions.ParsingError:
-        error('Error parsing the menu files.')
+        desktopmenu = xdg.Menu.parse(filename = "/etc/xdg/menus/gnome-applications.menu")
+    except xdg.Exceptions.ParsingError as e:
+        error('Error parsing the menu files: \n' + e.__str__())
         sys.exit(-1)
-    
+
     mainmenu=create_menu(desktopmenu, use_icons, launch)
     if run_tray:
         popupmenu=create_popup()
